@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>ConsoleReferenceServer</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <PackageId>ConsoleReferenceServer</PackageId>
+    <Company>OPC Foundation</Company>
+    <Product>OPC UA SDK</Product>
+    <Description>.Net Core Reference Server</Description>
+    <Copyright>Copyright © 2004-2018 OPC Foundation, Inc</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Quickstarts.MonoReferenceServer.Config.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Server\ReferenceNodeManager.cs;..\Server\ReferenceServer.cs;..\Server\ReferenceServerConfiguration.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Mono.Options" Version="5.3.0.1" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua" Version="1.3.351.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Quickstarts.ReferenceServer.Config.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="D:\Repos\hg\iot-edge-opc-publisher-testserver\Dockerfile" Link="Dockerfile" />
+  </ItemGroup>
+
+</Project>
