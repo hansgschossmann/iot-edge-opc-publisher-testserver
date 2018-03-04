@@ -7,3 +7,5 @@ A container is available as [hansgschossmann\iot-edge-opc-publisher-testserver](
 The server can be reached via its endpoint at `opc.tcp://<localhostname>:62541/Quickstarts/ReferenceServer`.
 
 By specifying the commandline option `-a` it accepts automatically all incoming requests from clients (Note: Please be aware of the implied security risk when using this option).
+
+This [repository](https://github.com/hansgschossmann/iot-edge-opc-publisher-testbed.git) contains a docker compose configuration to start up the testbed which is using this server.
