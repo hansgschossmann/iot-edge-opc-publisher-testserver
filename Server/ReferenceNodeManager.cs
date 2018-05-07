@@ -1331,13 +1331,14 @@ namespace Quickstarts.ReferenceServer
                     #endregion
                     #endregion
 
-                    #region MyCompany
-                    FolderState myCompanyFolder = CreateFolder(root, "MyCompany", "MyCompany");
-                    const string myCompany = "MyCompany_";
-
-                    BaseDataVariableState myCompanyInstructions = CreateVariable(myCompanyFolder, myCompany + "Instructions", "Instructions", DataTypeIds.String, ValueRanks.Scalar);
-                    myCompanyInstructions.Value = "A place for the vendor to describe their address-space.";
-                    variables.Add(myCompanyInstructions);
+                    #region OpcPublisher
+                    FolderState opcPublisherFolder = CreateFolder(root, "OpcPublisher specific nodes", "OpcPublisher");
+                    FolderState multiTagFolder = CreateFolder(opcPublisherFolder, "Folder with huge number of tags", "MultiTag");
+                    const string multiTag = "MultiTag_";
+                    for (int i = 0; i < MAX_TAGS; i++)
+                    {
+                        CreateDynamicVariable(multiTagFolder, multiTag + $"Integer{i:D6}", $"Integer{i:D6}", DataTypeIds.Integer, ValueRanks.Scalar);
+                    }
                     #endregion
                 }
                 catch (Exception e)
@@ -2642,6 +2643,7 @@ namespace Quickstarts.ReferenceServer
         #endregion
 
         #region Private Fields
+        private const int MAX_TAGS = 100000;
         private ReferenceServerConfiguration m_configuration;
         private Opc.Ua.Test.DataGenerator m_generator;
         private Timer m_simulationTimer;

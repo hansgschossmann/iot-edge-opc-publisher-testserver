@@ -154,6 +154,10 @@ namespace Quickstarts.ReferenceServer
             {
                 exitCode = ExitCode.ErrorServerNotStarted;
                 ConsoleSampleServer().Wait();
+                foreach (var endpoint in server.CurrentInstance.EndpointAddresses)
+                {
+                    Console.WriteLine($"Endpoint: {endpoint.AbsoluteUri}");
+                }
                 Console.WriteLine("Server started. Press Ctrl-C to exit...");
                 exitCode = ExitCode.ErrorServerRunning;
             }
