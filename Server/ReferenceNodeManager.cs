@@ -1331,14 +1331,30 @@ namespace Quickstarts.ReferenceServer
                     #endregion
                     #endregion
 
-                    #region OpcPublisher
+                    #region OpcPublisher testing
                     FolderState opcPublisherFolder = CreateFolder(root, "OpcPublisher specific nodes", "OpcPublisher");
-                    FolderState multiTagFolder = CreateFolder(opcPublisherFolder, "Folder with huge number of tags", "MultiTag");
-                    const string multiTag = "MultiTag_";
-                    for (int i = 0; i < MAX_TAGS; i++)
+                    FolderState multiTagFolder = CreateFolder(opcPublisherFolder, "Folder with huge number of tags", "MultiTagTestTags");
+                    string testMethodTag = "MultiTagTest_";
+                    for (int i = 0; i < MULTI_TAG_NUM; i++)
                     {
-                        CreateDynamicVariable(multiTagFolder, multiTag + $"Integer{i:D6}", $"Integer{i:D6}", DataTypeIds.Integer, ValueRanks.Scalar);
+                        CreateDynamicVariable(multiTagFolder, testMethodTag + $"Integer{i:D7}", $"Integer{i:D7}", DataTypeIds.Integer, ValueRanks.Scalar);
                     }
+
+                    FolderState opcMethodTagFolder = CreateFolder(opcPublisherFolder, "Folder with tags for OPC method testing", "OpcMethodTestTags");
+                    testMethodTag = "OpcMethodTest_";
+                    for (int i = 0; i < TEST_TAG_NUM; i++)
+                    {
+                        CreateDynamicVariable(opcMethodTagFolder, testMethodTag + $"Integer{i:D7}", $"Integer{i:D7}", DataTypeIds.Integer, ValueRanks.Scalar);
+                    }
+                    CreateDynamicVariable(opcMethodTagFolder, testMethodTag + "\"!§$%&/()=?`´\\+~*'#_-:.;,<>|@^°€µ{[]}", "\"!§$%&/()=?`´\\+~*'#_-:.;,<>|@^°€µ{[]}", DataTypeIds.Integer, ValueRanks.Scalar);
+
+                    FolderState iothubMethodFolder = CreateFolder(opcPublisherFolder, "Folder with tags for IoTHub method testing", "IoTHubMethodTestTags");
+                    testMethodTag = "IotHubMethodTest_";
+                    for (int i = 0; i < TEST_TAG_NUM; i++)
+                    {
+                        CreateDynamicVariable(iothubMethodFolder, testMethodTag + $"Integer{i:D7}", $"Integer{i:D7}", DataTypeIds.Integer, ValueRanks.Scalar);
+                    }
+                    CreateDynamicVariable(iothubMethodFolder, testMethodTag + "\"!§$%&/()=?`´\\+~*'#_-:.;,<>|@^°€µ{[]}", "\"!§$%&/()=?`´\\+~*'#_-:.;,<>|@^°€µ{[]}", DataTypeIds.Integer, ValueRanks.Scalar);
                     #endregion
                 }
                 catch (Exception e)
@@ -2643,7 +2659,8 @@ namespace Quickstarts.ReferenceServer
         #endregion
 
         #region Private Fields
-        private const int MAX_TAGS = 100000;
+        private const int MULTI_TAG_NUM = 100000;
+        private const int TEST_TAG_NUM = 10000;
         private ReferenceServerConfiguration m_configuration;
         private Opc.Ua.Test.DataGenerator m_generator;
         private Timer m_simulationTimer;

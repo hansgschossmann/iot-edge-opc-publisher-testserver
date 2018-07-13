@@ -91,7 +91,7 @@ namespace Quickstarts.ReferenceServer
     {
         public static int Main(string[] args)
         {
-            Console.WriteLine("{0} OPC UA Reference Server", Utils.IsRunningOnMono() ? "Mono" : ".Net Core");
+            Console.WriteLine(".Net Core OPC Publisher test server");
 
             // command line options
             bool showHelp = false;
@@ -119,7 +119,7 @@ namespace Quickstarts.ReferenceServer
 
             if (showHelp)
             {
-                Console.WriteLine(Utils.IsRunningOnMono() ? "Usage: mono MonoReferenceServer.exe [OPTIONS]" : "Usage: dotnet ConsoleReferenceServer.dll [OPTIONS]");
+                Console.WriteLine("Usage: dotnet ConsoleReferenceServer.dll [OPTIONS]");
                 Console.WriteLine();
 
                 Console.WriteLine("Options:");
