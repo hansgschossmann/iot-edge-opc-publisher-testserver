@@ -31,7 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Quickstarts.ReferenceServer
+namespace OpcPublisherTestServer
 {
     /// <summary>
     /// Defines constants for namespaces used by the application.

@@ -33,7 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 
-namespace Quickstarts.ReferenceServer
+namespace OpcPublisherTestServer
 {
     /// <summary>
     /// Implements a basic Quickstart Server.

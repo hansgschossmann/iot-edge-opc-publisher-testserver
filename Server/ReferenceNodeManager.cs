@@ -34,7 +34,7 @@ using System.Threading;
 using Opc.Ua;
 using Opc.Ua.Server;
 
-namespace Quickstarts.ReferenceServer
+namespace OpcPublisherTestServer
 {
     /// <summary>
     /// A node manager for a server that exposes several variables.

@@ -1,43 +1,18 @@
-﻿/* ========================================================================
- * Copyright (c) 2005-2017 The OPC Foundation, Inc. All rights reserved.
- *
- * OPC Foundation MIT License 1.00
- * 
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- * 
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- *
- * The complete license agreement can be found here:
- * http://opcfoundation.org/License/MIT/1.00/
- * ======================================================================*/
-
+﻿
 using Mono.Options;
 using Opc.Ua;
 using Opc.Ua.Configuration;
 using Opc.Ua.Server;
 using System;
+using Serilog;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.IO;
+using System.Text;
+using System.Reflection;
 
-
-namespace Quickstarts.ReferenceServer
+namespace OpcPublisherTestServer
 {
     public class ApplicationMessageDlg : IApplicationMessageDlg
     {
@@ -78,21 +53,20 @@ namespace Quickstarts.ReferenceServer
         }
     }
 
-    public enum ExitCode : int
-    {
-        Ok = 0,
-        ErrorServerNotStarted = 0x80,
-        ErrorServerRunning = 0x81,
-        ErrorServerException = 0x82,
-        ErrorInvalidCommandLine = 0x100
-    };
-
     public class Program
     {
-        public static int Main(string[] args)
-        {
-            Console.WriteLine(".Net Core OPC Publisher test server");
+        public static Serilog.Core.Logger Logger = null;
 
+        public static void Main(string[] args)
+        {
+            MainAsync(args).Wait();
+        }
+
+        /// <summary>
+        /// Asynchronous part of the main method of the app.
+        /// </summary>
+        public async static Task MainAsync(string[] args)
+        {
             // command line options
             bool showHelp = false;
             bool autoAccept = false;
@@ -102,35 +76,75 @@ namespace Quickstarts.ReferenceServer
                 { "a|autoaccept", "auto accept certificates (for testing only)", a => autoAccept = a != null }
             };
 
+            // initialize logging
+            InitLogging();
+            Logger.Information("OPC Publisher testserver");
+
             try
             {
                 IList<string> extraArgs = options.Parse(args);
                 foreach (string extraArg in extraArgs)
                 {
-                    Console.WriteLine("Error: Unknown option: {0}", extraArg);
+                    Logger.Error($"Unknown option: {extraArg}");
                     showHelp = true;
                 }
             }
             catch (OptionException e)
             {
-                Console.WriteLine(e.Message);
+                Logger.Fatal(e, "Exeption");
                 showHelp = true;
             }
 
+            // show usage if requested
             if (showHelp)
             {
-                Console.WriteLine("Usage: dotnet ConsoleReferenceServer.dll [OPTIONS]");
-                Console.WriteLine();
-
-                Console.WriteLine("Options:");
-                options.WriteOptionDescriptions(Console.Out);
-                return (int)ExitCode.ErrorInvalidCommandLine;
+                Usage(options);
+                return;
             }
 
             MyRefServer server = new MyRefServer(autoAccept);
             server.Run();
+        }
 
-            return (int)MyRefServer.ExitCode;
+        /// <summary>
+        /// Usage message.
+        /// </summary>
+        private static void Usage(Mono.Options.OptionSet options)
+        {
+
+            // show usage
+            Logger.Information("");
+            Logger.Information("Usage: {0}.exe [<options>]", Assembly.GetEntryAssembly().GetName().Name);
+            Logger.Information("");
+            Logger.Information("OPC Publisher test server.");
+            Logger.Information("To exit the application, just press CTRL-C while it is running.");
+            Logger.Information("");
+
+            // output the options
+            Logger.Information("Options:");
+            StringBuilder stringBuilder = new StringBuilder();
+            StringWriter stringWriter = new StringWriter(stringBuilder);
+            options.WriteOptionDescriptions(stringWriter);
+            string[] helpLines = stringBuilder.ToString().Split("\n");
+            foreach (var line in helpLines)
+            {
+                Logger.Information(line);
+            }
+        }
+
+        /// <summary>
+        /// Initialize logging.
+        /// </summary>
+        private static void InitLogging()
+        {
+            LoggerConfiguration loggerConfiguration = new LoggerConfiguration();
+
+            // set logging sinks
+            loggerConfiguration.WriteTo.Console();
+
+            Logger = loggerConfiguration.CreateLogger();
+
+            return;
         }
     }
 
@@ -140,7 +154,6 @@ namespace Quickstarts.ReferenceServer
         Task status;
         DateTime lastEventTime;
         static bool autoAccept = false;
-        static ExitCode exitCode;
 
         public MyRefServer(bool _autoAccept)
         {
@@ -152,20 +165,17 @@ namespace Quickstarts.ReferenceServer
 
             try
             {
-                exitCode = ExitCode.ErrorServerNotStarted;
                 ConsoleSampleServer().Wait();
                 foreach (var endpoint in server.CurrentInstance.EndpointAddresses)
                 {
                     Console.WriteLine($"Endpoint: {endpoint.AbsoluteUri}");
                 }
                 Console.WriteLine("Server started. Press Ctrl-C to exit...");
-                exitCode = ExitCode.ErrorServerRunning;
             }
             catch (Exception ex)
             {
                 Utils.Trace("ServiceResultException:" + ex.Message);
                 Console.WriteLine("Exception: {0}", ex.Message);
-                exitCode = ExitCode.ErrorServerException;
                 return;
             }
 
@@ -198,11 +208,7 @@ namespace Quickstarts.ReferenceServer
                     _server.Stop();
                 }
             }
-
-            exitCode = ExitCode.Ok;
         }
-
-        public static ExitCode ExitCode { get => exitCode; }
 
         private static void CertificateValidator_CertificateValidation(CertificateValidator validator, CertificateValidationEventArgs e)
         {
