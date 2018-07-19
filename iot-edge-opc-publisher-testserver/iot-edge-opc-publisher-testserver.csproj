@@ -2,13 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <AssemblyName>ConsoleReferenceServer</AssemblyName>
+    <AssemblyName>iot-edge-opc-publisher-testserver</AssemblyName>
     <OutputType>Exe</OutputType>
-    <PackageId>ConsoleReferenceServer</PackageId>
-    <Company>OPC Foundation</Company>
-    <Product>OPC UA SDK</Product>
-    <Description>.Net Core Reference Server</Description>
-    <Copyright>Copyright © 2004-2018 OPC Foundation, Inc</Copyright>
+    <PackageId>OPC Publisher</PackageId>
+    <Company>Microsoft Corp</Company>
+    <Product>OPC Publisher</Product>
+    <Description>OPC Publisher testserver</Description>
+    <Copyright>Copyright © 2004-2018 Microsoft Corp</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,7 +21,7 @@
   
   <ItemGroup>
     <PackageReference Include="Mono.Options" Version="5.3.0.1" />
-    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua" Version="1.3.352.12" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua" Version="1.4.353.15" />
   </ItemGroup>
 
   <ItemGroup>
