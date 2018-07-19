@@ -1,13 +1,24 @@
-﻿FROM microsoft/dotnet:2.1-sdk
+﻿ARG runtime_base_tag=2.1-runtime-alpine
+ARG build_base_tag=2.1-sdk-alpine
 
-COPY . /build
+FROM microsoft/dotnet:${build_base_tag} AS build
+WORKDIR /app
 
-WORKDIR /build
+# copy csproj and restore as distinct layers
+COPY iot-edge-opc-publisher-testserver/*.csproj ./iot-edge-opc-publisher-testserver/
+WORKDIR /app/iot-edge-opc-publisher-testserver
 RUN dotnet restore
 
-WORKDIR /build/iot-edge-opc-publisher-testserver
-RUN dotnet publish --framework netcoreapp2.1 --configuration Release --output /build/out iot-edge-opc-publisher-testserver.csproj
+# copy and publish app
+WORKDIR /app
+COPY iot-edge-opc-publisher-testserver/. ./iot-edge-opc-publisher-testserver/
+COPY Server/. ./Server/
+WORKDIR /app/iot-edge-opc-publisher-testserver
+RUN dotnet publish -c Release -o out
 
-EXPOSE 62541
-
-ENTRYPOINT ["dotnet", "/build/out/ConsoleReferenceServer.dll"]
+# start it up
+FROM microsoft/dotnet:${runtime_base_tag} AS runtime
+WORKDIR /app
+COPY --from=build /app/iot-edge-opc-publisher-testserver/out ./
+WORKDIR /appdata
+ENTRYPOINT ["dotnet", "/app/iot-edge-opc-publisher-testserver.dll"]
