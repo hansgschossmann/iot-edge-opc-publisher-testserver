@@ -68,38 +68,62 @@ namespace OpcPublisherTestServer
         public async static Task MainAsync(string[] args)
         {
             // command line options
-            bool showHelp = false;
+            bool shouldShowHelp = false;
             bool autoAccept = false;
 
             Mono.Options.OptionSet options = new Mono.Options.OptionSet {
-                { "h|help", "show this message and exit", h => showHelp = h != null },
-                { "a|autoaccept", "auto accept certificates (for testing only)", a => autoAccept = a != null }
+                { "h|help", "show this message and exit", h => shouldShowHelp = h != null },
+                { "aa|autoaccept", "auto accept certificates (for testing only)", a => autoAccept = a != null }
             };
 
             // initialize logging
             InitLogging();
             Logger.Information("OPC Publisher testserver");
-
+            List<string> extraArgs = new List<string>();
             try
             {
-                IList<string> extraArgs = options.Parse(args);
-                foreach (string extraArg in extraArgs)
-                {
-                    Logger.Error($"Unknown option: {extraArg}");
-                    showHelp = true;
-                }
+                // parse the command line
+                extraArgs = options.Parse(args);
             }
             catch (OptionException e)
             {
-                Logger.Fatal(e, "Exeption");
-                showHelp = true;
+                // initialize logging
+                InitLogging();
+
+                // show message
+                Logger.Error(e, "Error in command line options");
+                Logger.Error($"Command line arguments: {String.Join(" ", args)}");
+
+                // show usage
+                Usage(options);
+                return;
             }
 
+            // initialize logging
+            InitLogging();
+
             // show usage if requested
-            if (showHelp)
+            if (shouldShowHelp)
             {
                 Usage(options);
                 return;
+            }
+
+            // Validate and parse extra arguments.
+            switch (extraArgs.Count)
+            {
+                case 0:
+                case 1:
+                    {
+                        break;
+                    }
+                default:
+                    {
+                        Logger.Error("Error in command line options");
+                        Logger.Error($"Command line arguments: {String.Join(" ", args)}");
+                        Usage(options);
+                        return;
+                    }
             }
 
             MyRefServer server = new MyRefServer(autoAccept);
@@ -116,7 +140,7 @@ namespace OpcPublisherTestServer
             Logger.Information("");
             Logger.Information("Usage: {0}.exe [<options>]", Assembly.GetEntryAssembly().GetName().Name);
             Logger.Information("");
-            Logger.Information("OPC Publisher test server.");
+            Logger.Information("OPC Publisher testserver.");
             Logger.Information("To exit the application, just press CTRL-C while it is running.");
             Logger.Information("");
 

@@ -1,6 +1,6 @@
 # iot-edge-opc-publisher-testserver
 This OPC UA server is based on the source code of the Console reference server in the [OPC UA .NET Standard github repository](https://github.com/OPCFoundation/UA-.NETStandard) of the OPC Foundation.
-The original Console reference server source can be found in the subdirectory ./SampleApplications/Workshop/Reference of the repository.
+The original Console reference server source can be found in the subdirectory ./SampleApplications/Workshop/Reference of the above mentioned repository.
 
 A container is available as [hansgschossmann\iot-edge-opc-publisher-testserver](https://hub.docker.com/r/hansgschossmann/iot-edge-opc-publisher-testserver/) on Docker Hub.
 

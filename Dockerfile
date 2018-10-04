@@ -6,7 +6,6 @@ WORKDIR /app
 
 # copy csproj and restore as distinct layers
 COPY iot-edge-opc-publisher-testserver/*.csproj ./iot-edge-opc-publisher-testserver/
-WORKDIR /app/Server
 WORKDIR /app/iot-edge-opc-publisher-testserver
 RUN dotnet restore
 
