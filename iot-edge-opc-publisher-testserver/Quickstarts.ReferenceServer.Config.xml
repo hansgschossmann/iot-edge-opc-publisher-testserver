@@ -13,8 +13,8 @@
 
     <!-- Where the application instance certificate is stored-->
     <ApplicationCertificate>
-      <StoreType>Directory</StoreType>
-      <StorePath>pki/own</StorePath>
+      <StoreType>X509Store</StoreType>
+      <StorePath>CurrentUser\UA_MachineDefault</StorePath>
       <SubjectName>CN=Quickstart Reference Server, C=US, S=Arizona, O=OPC Foundation, DC=localhost</SubjectName>
     </ApplicationCertificate>
 

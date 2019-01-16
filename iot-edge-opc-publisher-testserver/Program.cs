@@ -248,7 +248,7 @@ namespace OpcPublisherTestServer
                     Console.WriteLine("Rejected Certificate: {0}", e.Certificate.Subject);
                 }
             }
-        }
+         }
 
         private async Task ConsoleSampleServer()
         {
